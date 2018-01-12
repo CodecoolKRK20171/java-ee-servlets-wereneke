@@ -1,8 +1,9 @@
 package com.codecool.wereneke;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
-import org.apache.commons.io.IOUtils;
+import com.codecool.wereneke.dao.Dao;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class MiniServlet extends HttpServlet {
+
+    Dao dao = new Dao();
 
     protected void doGet( HttpServletRequest request,
                           HttpServletResponse response)
@@ -27,14 +30,32 @@ public class MiniServlet extends HttpServlet {
                            HttpServletResponse response)
             throws ServletException, IOException {
 
-        String future = "";
-        JtwigTemplate template = JtwigTemplate.classpathTemplate("answer.html");
-        JtwigModel model = JtwigModel.newModel();
+        String name = request.getParameter("name");
+        String color = request.getParameter("color");
+        String date = request.getParameter("birthdate");
 
-        model.with("future", future);
-        String answer = template.render(model);
+        String future = null;
+        try {
+            future = future(name, color, date);
+            JtwigTemplate template = JtwigTemplate.classpathTemplate("answer.html");
+            JtwigModel model = JtwigModel.newModel();
 
-        response.getWriter().write(answer);
+            model.with("future", future);
+            String answer = template.render(model);
+
+            response.getWriter().write(answer);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String future(String name, String color, String birthdate) throws SQLException{
+
+        String result = name + color + birthdate;
+        int futureIndex = result.length() % 8;
+
+        return dao.getFuture(futureIndex);
     }
 
 }
