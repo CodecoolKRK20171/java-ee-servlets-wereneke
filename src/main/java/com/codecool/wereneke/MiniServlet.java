@@ -53,7 +53,8 @@ public class MiniServlet extends HttpServlet {
     private String future(String name, String color, String birthdate) throws SQLException{
 
         String result = name + color + birthdate;
-        int futureIndex = result.length() % 8;
+        int futureIndex = result.length() % 7;
+        if (futureIndex == 0) futureIndex = 7;
 
         return dao.getFuture(futureIndex);
     }
