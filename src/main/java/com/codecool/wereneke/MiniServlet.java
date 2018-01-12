@@ -17,7 +17,9 @@ public class MiniServlet extends HttpServlet {
                           HttpServletResponse response)
             throws ServletException, IOException {
 
-        String answer = getFileWithUtil("hello.html");
+        JtwigTemplate template = JtwigTemplate.classpathTemplate("hello.html");
+        JtwigModel model = JtwigModel.newModel();
+        String answer = template.render(model);
         response.getWriter().write(answer);
     }
 
@@ -35,17 +37,4 @@ public class MiniServlet extends HttpServlet {
         response.getWriter().write(answer);
     }
 
-    private String getFileWithUtil(String fileName) {
-
-        String result = "";
-
-        ClassLoader classLoader = getClass().getClassLoader();
-        try {
-            result = IOUtils.toString(classLoader.getResourceAsStream(fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
 }
